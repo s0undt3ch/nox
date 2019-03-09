@@ -13,14 +13,16 @@
 # limitations under the License.
 
 import os
-
+import sys
 import nox
 
 
 ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
 
+nox.options.reuse_existing_virtualenvs = True
 
-@nox.session(python=["3.5", "3.6", "3.7"])
+
+@nox.session(python=["2.7", "3.5", "3.6", "3.7"])
 def tests(session):
     """Run test suite with pytest."""
     session.install("-r", "requirements-test.txt")
@@ -36,7 +38,7 @@ def tests(session):
 def cover(session):
     """Coverage analysis."""
     session.install("coverage")
-    if ON_APPVEYOR:
+    if ON_APPVEYOR or sys.version_info < (3,):
         fail_under = "--fail-under=99"
     else:
         fail_under = "--fail-under=100"

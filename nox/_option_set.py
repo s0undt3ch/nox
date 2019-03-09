@@ -61,23 +61,17 @@ class Option:
         self,
         name,
         *flags,
-        help=None,
-        group=None,
-        noxfile=False,
-        merge_func=None,
-        finalizer_func=None,
-        default=None,
-        hidden=False,
         **kwargs
     ):
         self.name = name
         self.flags = flags
-        self.help = help
-        self.group = group
-        self.noxfile = noxfile
-        self.merge_func = merge_func
-        self.finalizer_func = finalizer_func
-        self.hidden = hidden
+        self.help = kwargs.pop('help', None)
+        self.group = kwargs.pop('group', None)
+        self.noxfile = kwargs.pop('noxfile', False)
+        self.merge_func = kwargs.pop('merge_func', None)
+        self.finalizer_func = kwargs.pop('finalizer_func', None)
+        self.hidden = kwargs.pop('hidden', False)
+        default = kwargs.pop('default', None)
         self.kwargs = kwargs
         self._default = default
 

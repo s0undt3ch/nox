@@ -13,7 +13,10 @@
 # limitations under the License.
 
 import functools
-import itertools
+try:
+    from itertools import zip_longest as zip_longest
+except:
+    from itertools import izip_longest as zip_longest
 
 
 class Param:
@@ -27,14 +30,16 @@ class Param:
             it will be generated from the parameters.
     """
 
-    def __init__(self, *args, arg_names=None, id=None):
+    def __init__(self, *args, **kwargs):
         self.args = tuple(args)
-        self.id = id
+        self.id = kwargs.pop('id', None)
 
+        arg_names = kwargs.pop('arg_names', None)
         if arg_names is None:
             arg_names = ()
 
         self.arg_names = tuple(arg_names)
+        assert not kwargs
 
     @property
     def call_spec(self):
@@ -56,9 +61,12 @@ class Param:
         return new
 
     def update(self, other):
-        self.id = ", ".join([str(self), str(other)])
         self.args = self.args + other.args
         self.arg_names = self.arg_names + other.arg_names
+        # Reset self.id because argument order matters
+        self.id = None
+        # Store the recomputed ID with the new order
+        self.id = str(self)
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -125,7 +133,7 @@ def parametrize_decorator(arg_names, arg_values_list, ids=None):
 
     # Generate params for each item in the param_args_values list.
     param_specs = []
-    for param_arg_values, param_id in itertools.zip_longest(arg_values_list, ids):
+    for param_arg_values, param_id in zip_longest(arg_values_list, ids):
         if isinstance(param_arg_values, Param):
             param_spec = param_arg_values
             param_spec.arg_names = tuple(arg_names)

@@ -33,7 +33,9 @@ _SYSTEM = platform.system()
 
 class InterpreterNotFound(OSError):
     def __init__(self, interpreter):
-        super().__init__("Python interpreter {} not found".format(interpreter))
+        super(InterpreterNotFound, self).__init__(
+            "Python interpreter {} not found".format(interpreter)
+        )
         self.interpreter = interpreter
 
 
@@ -111,7 +113,8 @@ class VirtualEnv(ProcessEnv):
         self.interpreter = interpreter
         self._resolved = None
         self.reuse_existing = reuse_existing
-        super(VirtualEnv, self).__init__()
+        ProcessEnv.__init__(self)
+        # super(VirtualEnv, self).__init__()
 
     def _clean_location(self):
         """Deletes any existing virtualenv"""

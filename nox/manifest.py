@@ -15,6 +15,7 @@
 import copy
 import functools
 import itertools
+import sys
 import types
 
 from nox._parametrize import generate_calls
@@ -31,7 +32,8 @@ def _copy_func(src, name=None):
     )
     dst.__dict__.update(copy.deepcopy(src.__dict__))
     dst = functools.update_wrapper(dst, src)
-    dst.__kwdefaults__ = src.__kwdefaults__
+    if sys.version_info > (3,):
+        dst.__kwdefaults__ = src.__kwdefaults__
     return dst
 
 
@@ -134,12 +136,11 @@ class Manifest:
         self._queue = queue
 
         # If a session was requested and was not found, complain loudly.
-        all_sessions = set(
-            itertools.chain(
-                [x.name for x in self._all_sessions if x.name],
-                *[x.signatures for x in self._all_sessions],
-            )
-        )
+        all_sessions = set()
+        for session in self._all_sessions:
+            all_sessions.add(session.name)
+            for signature in session.signatures:
+                all_sessions.add(signature)
         missing_sessions = set(specified_sessions) - all_sessions
         if missing_sessions:
             raise KeyError("Sessions not found: {}".format(", ".join(missing_sessions)))
@@ -170,6 +171,8 @@ class Manifest:
         """
         sessions = []
 
+        if sys.version_info < (3,) and isinstance(name, unicode):
+            name = name.encode('utf-8')
         # If the func has the python attribute set to a list, we'll need
         # to expand them.
         if isinstance(func.python, (list, tuple, set)):
@@ -207,7 +210,6 @@ class Manifest:
                 )
                 # Ensure that specifying session-python will run all parameterizations.
                 long_names.append("{}-{}".format(name, func.python))
-
             sessions.append(SessionRunner(name, long_names, call, self._config, self))
 
         # Edge case: If the parameters made it such that there were no valid
@@ -239,6 +241,9 @@ class Manifest:
         Raises:
             ValueError: If the session was not found.
         """
+        if sys.version_info < (3,) and isinstance(session, unicode):
+            session = session.encode('utf-8')
+
         # Sanity check: If this session is already in the queue, this is
         # a no-op.
         if session in self:

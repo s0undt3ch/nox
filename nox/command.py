@@ -68,7 +68,6 @@ def _clean_env(env):
 
 def run(
     args,
-    *,
     env=None,
     silent=False,
     path=None,

@@ -158,13 +158,17 @@ options.add_options(
         help="Arguments following ``--`` that are passed through to the session(s).",
         finalizer_func=_posargs_finalizer,
     ),
-    *_option_set.make_flag_pair(
+)
+options.add_options(
+    *(_option_set.make_flag_pair(
         "reuse_existing_virtualenvs",
         ("-r", "--reuse-existing-virtualenvs"),
         ("--no-reuse-existing-virtualenvs",),
         group="secondary",
         help="Re-use existing virtualenvs instead of recreating them.",
-    ),
+    ))
+)
+options.add_options(
     _option_set.Option(
         "noxfile",
         "-f",
@@ -180,28 +184,36 @@ options.add_options(
         merge_func=_envdir_merge_func,
         group="secondary",
         help="Directory where nox will store virtualenvs, this is ``.nox`` by default.",
-    ),
-    *_option_set.make_flag_pair(
+    )
+)
+options.add_options(
+    *(_option_set.make_flag_pair(
         "stop_on_first_error",
         ("-x", "--stop-on-first-error"),
         ("--no-stop-on-first-error",),
         group="secondary",
         help="Stop after the first error.",
-    ),
-    *_option_set.make_flag_pair(
+    ))
+)
+options.add_options(
+    *(_option_set.make_flag_pair(
         "error_on_missing_interpreters",
         ("--error-on-missing-interpreters",),
         ("--no-error-on-missing-interpreters",),
         group="secondary",
         help="Error instead of skipping sessions if an interpreter can not be located.",
-    ),
-    *_option_set.make_flag_pair(
+    ))
+)
+options.add_options(
+    *(_option_set.make_flag_pair(
         "error_on_external_run",
         ("--error-on-external-run",),
         ("--no-error-on-external-run",),
         group="secondary",
         help="Error if run() is used to execute a program that isn't installed in a session's virtualenv.",
-    ),
+    ))
+)
+options.add_options(
     _option_set.Option(
         "install_only",
         "--install-only",

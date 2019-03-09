@@ -17,6 +17,7 @@ import copy
 import io
 import json
 import os
+import sys
 import platform
 from unittest import mock
 
@@ -55,7 +56,10 @@ def test_load_nox_module_expandvars():
         else:
             config = _options.options.namespace(noxfile="${RESOURCES_PATH}/noxfile.py")
         noxfile_module = tasks.load_nox_module(config)
-    assert noxfile_module.__file__ == os.path.join(RESOURCES, "noxfile.py")
+    if sys.version_info < (3,):
+        assert noxfile_module.__file__.startswith(os.path.join(RESOURCES, "noxfile.py"))
+    else:
+        assert noxfile_module.__file__ == os.path.join(RESOURCES, "noxfile.py")
     assert noxfile_module.SIGIL == "123"
 
 
