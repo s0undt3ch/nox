@@ -15,6 +15,7 @@
 import copy
 import functools
 import itertools
+import sys
 import types
 
 from nox._parametrize import generate_calls
@@ -31,7 +32,8 @@ def _copy_func(src, name=None):
     )
     dst.__dict__.update(copy.deepcopy(src.__dict__))
     dst = functools.update_wrapper(dst, src)
-    dst.__kwdefaults__ = src.__kwdefaults__
+    if sys.version_info > (3,):
+        dst.__kwdefaults__ = src.__kwdefaults__
     return dst
 
 
@@ -129,12 +131,11 @@ class Manifest:
         self._queue = queue
 
         # If a session was requested and was not found, complain loudly.
-        all_sessions = set(
-            itertools.chain(
-                [x.name for x in self._all_sessions if x.name],
-                *[x.signatures for x in self._all_sessions],
-            )
-        )
+        all_sessions = set()
+        for session in self._all_sessions:
+            all_sessions.add(session.name)
+            for signature in session.signatures:
+                all_sessions.add(signature)
         missing_sessions = set(specified_sessions) - all_sessions
         if missing_sessions:
             raise KeyError("Sessions not found: {}".format(", ".join(missing_sessions)))

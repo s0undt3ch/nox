@@ -132,7 +132,7 @@ class Session:
             logger.exception("Function {!r} raised {!r}.".format(func, e))
             raise nox.command.CommandFailed()
 
-    def run(self, *args, env=None, **kwargs):
+    def run(self, *args, **kwargs):
         """Run a command.
 
         Commands must be specified as a list of strings, for example::
@@ -174,6 +174,7 @@ class Session:
             do not have a virtualenv.
         :type external: bool
         """
+        env = kwargs.pop("env", None)
         if not args:
             raise ValueError("At least one argument required to run().")
 
@@ -183,12 +184,12 @@ class Session:
 
         return self._run(*args, env=env, **kwargs)
 
-    def _run(self, *args, env=None, **kwargs):
+    def _run(self, *args, **kwargs):
         """Like run(), except that it runs even if --install-only is provided."""
+        env = kwargs.pop("env", None)
         # Legacy support - run a function given.
         if callable(args[0]):
             return self._run_func(args[0], args[1:], kwargs)
-
         # Combine the env argument with our virtualenv's env vars.
         if env is not None:
             overlay_env = env

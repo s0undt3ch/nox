@@ -160,7 +160,7 @@ class TestSession:
         result = session.run(
             sys.executable,
             "-c",
-            'import os; print(os.environ["A"], os.environ["B"])',
+            'from __future__ import print_function; import os; print(os.environ["A"], os.environ["B"])',
             env={"B": "3"},
             silent=True,
         )
@@ -279,6 +279,7 @@ class TestSession:
         with pytest.raises(nox.sessions._SessionSkip):
             session.skip()
 
+    @pytest.mark.skipif(sys.version_info, (3,), reason="Py2 behavior is different")
     def test___slots__(self):
         session, _ = self.make_session_and_runner()
         with pytest.raises(AttributeError):

@@ -36,6 +36,8 @@ setup(
         "Topic :: Software Development :: Testing",
         "Environment :: Console",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
@@ -52,6 +54,7 @@ setup(
         "colorlog>=2.6.1,<4.0.0",
         "py>=1.4.0,<2.0.0",
         "virtualenv>=14.0.0",
+        "enum34; python_version < '3'",
     ],
     extras_require={"tox_to_nox": ["jinja2", "tox"]},
     entry_points={
@@ -65,5 +68,5 @@ setup(
         "Source Code": "https://github.com/theacodes/nox",
         "Bug Tracker": "https://github.com/theacodes/nox/issues",
     },
-    python_requires=">=3.5",
+    python_requires=">=2.7",
 )

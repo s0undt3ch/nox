@@ -238,7 +238,8 @@ def main():
 
     if args.version:
         dist = pkg_resources.get_distribution("nox")
-        print(dist.version, file=sys.stderr)
+        sys.stderr.write(dist.version + "\n")
+        sys.stderr.flush()
         return
 
     global_config = GlobalConfig(args)
