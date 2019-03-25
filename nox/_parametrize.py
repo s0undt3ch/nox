@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 import functools
 
 
@@ -77,7 +78,12 @@ def update_call_specs(call_specs, new_specs):
 
 
 def generate_session_signature(func, call_spec):
-    args = ["{}={}".format(k, repr(call_spec[k])) for k in sorted(call_spec.keys())]
+    _call_spec = call_spec.copy()
+    if sys.version_info < (3,):
+        for key, value in _call_spec.items():
+            if isinstance(value, unicode):
+                _call_spec[key] = value.encode('utf-8')
+    args = ["{}={}".format(k, repr(_call_spec[k])) for k in sorted(call_spec.keys())]
     return "({})".format(", ".join(args))
 
 
