@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 import functools
 try:
     from itertools import zip_longest as zip_longest
@@ -50,6 +51,10 @@ class Param:
             return self.id
         else:
             call_spec = self.call_spec
+            if sys.version_info < (3,):
+                for key, value in call_spec.items():
+                    if isinstance(value, unicode):
+                        call_spec[key] = value.encode('utf-8')
             keys = sorted(call_spec.keys(), key=str)
             args = ["{}={}".format(k, repr(call_spec[k])) for k in keys]
             return ", ".join(args)
