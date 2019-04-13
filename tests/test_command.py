@@ -15,6 +15,7 @@
 import logging
 import os
 import sys
+import tempfile
 from unittest import mock
 
 import pytest
@@ -158,3 +159,26 @@ def test_interrupt():
     with mock.patch("subprocess.Popen", return_value=mock_proc):
         with pytest.raises(KeyboardInterrupt):
             nox.command.run([PYTHON, "-c" "123"])
+
+
+def test_custom_stdout(capsys):
+    stdout = tempfile.TemporaryFile(mode="w+b")
+    try:
+        nox.command.run(
+            [
+                PYTHON,
+                "-c",
+                'import sys; sys.stdout.write("out");'
+                'sys.stderr.write("err"); sys.exit(0)',
+            ],
+            stdout=stdout,
+        )
+        out, err = capsys.readouterr()
+        assert "out" not in err
+        assert "err" not in err
+        stdout.seek(0)
+        tempfile_contents = stdout.read().decode("utf-8")
+        assert "out" in tempfile_contents
+        assert "err" in tempfile_contents
+    finally:
+        stdout.close()
