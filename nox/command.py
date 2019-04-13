@@ -74,6 +74,7 @@ def run(
     success_codes=None,
     log=True,
     external=False,
+    **popen_kws
 ):
     """Run a command-line program."""
 
@@ -109,7 +110,9 @@ def run(
     env = _clean_env(env)
 
     try:
-        return_code, output = popen([cmd_path] + list(args), silent=silent, env=env)
+        return_code, output = popen(
+            [cmd_path] + list(args), silent=silent, env=env, **popen_kws
+        )
 
         if return_code not in success_codes:
             logger.error(
