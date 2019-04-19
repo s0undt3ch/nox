@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
 import platform
 import re
 import shutil
 import sys
+from collections import namedtuple
 
 import py
 
@@ -30,6 +32,7 @@ _BLACKLISTED_ENV_VARS = frozenset(
 )
 _SYSTEM = platform.system()
 
+VERSION_INFO = namedtuple('version_info', ['major', 'minor', 'micro', 'releaselevel', 'serial'])
 
 class InterpreterNotFound(OSError):
     def __init__(self, interpreter):
@@ -110,6 +113,7 @@ class VirtualEnv(ProcessEnv):
         self.location = os.path.abspath(location)
         self.interpreter = interpreter
         self._resolved = None
+        self._version_info = None
         self.reuse_existing = reuse_existing
         super(VirtualEnv, self).__init__()
 
@@ -190,6 +194,23 @@ class VirtualEnv(ProcessEnv):
             return os.path.join(self.location, "Scripts")
         else:
             return os.path.join(self.location, "bin")
+
+    @property
+    def version_info(self):
+        if self._version_info is None:
+            cmd = [
+                self._resolved_interpreter,
+                "-c",
+                "import sys, json; sys.stdout.write(json.dumps(list(sys.version_info)))"
+            ]
+            self._version_info = VERSION_INFO(
+                *(json.loads(nox.command.run(cmd, silent=True, log=False)))
+            )
+        return self._version_info
+
+    @property
+    def python_executable(self):
+        return self._resolved_interpreter
 
     def create(self):
         """Create the virtualenv."""
