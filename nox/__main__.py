@@ -37,7 +37,7 @@ def main():
         return
 
     if args.version:
-        dist = pkg_resources.get_distribution("nox")
+        dist = pkg_resources.get_distribution("nox-py2")
         sys.stderr.write(dist.version + "\n")
         sys.stderr.flush()
         return
