@@ -42,7 +42,7 @@ def main():
         sys.stderr.flush()
         return
 
-    setup_logging(color=args.color)
+    setup_logging(color=args.color, verbose=args.verbose)
 
     # Execute the appropriate tasks.
     exit_code = workflow.execute(

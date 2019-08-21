@@ -15,7 +15,7 @@
 import os
 import sys
 
-import py
+import py  # type: ignore
 
 from nox.logger import logger
 from nox.popen import popen
@@ -125,6 +125,9 @@ def run(
                 sys.stderr.write(output)
 
             raise CommandFailed("Returned code {}".format(return_code))
+
+        if output:
+            logger.output(output)
 
         return output if silent else True
 

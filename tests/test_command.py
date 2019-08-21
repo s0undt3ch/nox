@@ -15,7 +15,11 @@
 import logging
 import os
 import sys
-from unittest import mock
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 import pytest
 
@@ -57,6 +61,61 @@ def test_run_env_unicode():
     )
 
     assert "123" in result
+
+
+def test_run_verbosity(capsys, caplog):
+    caplog.clear()
+    with caplog.at_level(logging.DEBUG):
+        result = nox.command.run([PYTHON, "-c", "print(123)"], silent=True)
+
+        out, _ = capsys.readouterr()
+
+        assert "123" in result
+        assert out == ""
+
+    logs = [rec for rec in caplog.records if rec.levelname == "OUTPUT"]
+    assert not logs
+
+    caplog.clear()
+    with caplog.at_level(logging.DEBUG - 1):
+        result = nox.command.run([PYTHON, "-c", "print(123)"], silent=True)
+
+        out, _ = capsys.readouterr()
+
+        assert "123" in result
+        assert out == ""
+
+    logs = [rec for rec in caplog.records if rec.levelname == "OUTPUT"]
+    assert logs
+    assert logs[0].message.strip() == "123"
+
+
+def test_run_verbosity_failed_command(capsys, caplog):
+    caplog.clear()
+    with caplog.at_level(logging.DEBUG):
+        with pytest.raises(nox.command.CommandFailed):
+            nox.command.run([PYTHON, "-c", "print(123); exit(1)"], silent=True)
+
+        out, err = capsys.readouterr()
+
+        assert "123" in err
+        assert out == ""
+
+    logs = [rec for rec in caplog.records if rec.levelname == "OUTPUT"]
+    assert not logs
+
+    caplog.clear()
+    with caplog.at_level(logging.DEBUG - 1):
+        with pytest.raises(nox.command.CommandFailed):
+            nox.command.run([PYTHON, "-c", "print(123); exit(1)"], silent=True)
+
+        out, err = capsys.readouterr()
+
+        assert "123" in err
+        assert out == ""
+
+    # Nothing is logged but the error is still written to stderr
+    assert not logs
 
 
 def test_run_env_systemroot():

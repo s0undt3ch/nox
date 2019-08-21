@@ -22,7 +22,7 @@ long_description = open("README.rst", "r", encoding="utf-8").read()
 
 setup(
     name="nox-py2",
-    version="2019.6.25",
+    version="2019.8.20",
     description="Flexible test automation.",
     long_description=long_description,
     url="https://nox.thea.codes",
@@ -30,7 +30,7 @@ setup(
     author_email="me@thea.codes",
     license="Apache Software License",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: Apache Software License",
         "Topic :: Software Development :: Testing",
@@ -51,6 +51,7 @@ setup(
     packages=["nox"],
     include_package_data=True,
     install_requires=[
+        "argcomplete>=1.9.4, <2.0",
         "colorlog>=2.6.1,<4.0.0",
         "py>=1.4.0,<2.0.0",
         "virtualenv>=14.0.0",
