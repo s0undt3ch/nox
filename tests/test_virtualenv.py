@@ -15,7 +15,11 @@
 import os
 import shutil
 import sys
-from unittest import mock
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 import py
 import pytest
@@ -24,7 +28,11 @@ import nox.virtualenv
 
 
 IS_WINDOWS = nox.virtualenv._SYSTEM == "Windows"
-HAS_CONDA = shutil.which("conda") is not None
+try:
+    HAS_CONDA = shutil.which("conda") is not None
+except AttributeError:
+    # Python 2
+    HAS_CONDA = False
 RAISE_ERROR = "RAISE_ERROR"
 
 
@@ -287,6 +295,7 @@ def test_create(make_one):
     assert dir_.join("test.txt").check()
 
 
+@pytest.mark.skipif(sys.version_info < (3,), reason='Test not applicable to Py2')
 def test_create_venv_backend(make_one):
     venv, dir_ = make_one(venv=True)
     venv.create()

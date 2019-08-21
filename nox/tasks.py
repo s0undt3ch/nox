@@ -20,7 +20,6 @@ import os
 from colorlog.escape_codes import parse_colors  # type: ignore
 
 import nox
-from nox import _options
 from nox import registry
 from nox.logger import logger
 from nox.manifest import Manifest
@@ -54,9 +53,15 @@ def load_nox_module(global_config):
         # import-time path resolutions work the way the Noxfile author would
         # guess.
         os.chdir(os.path.realpath(os.path.dirname(global_config.noxfile)))
-        return importlib.machinery.SourceFileLoader(
-            "user_nox_module", global_config.noxfile
-        ).load_module()
+        try:
+            return importlib.machinery.SourceFileLoader(
+                "user_nox_module", global_config.noxfile
+            ).load_module()
+        except AttributeError:
+            # Python 2
+            import imp
+
+            return imp.load_source("user_nox_module", global_config.noxfile)
 
     except (IOError, OSError):
         logger.error("Noxfile {} not found.".format(global_config.noxfile))
@@ -71,6 +76,8 @@ def merge_noxfile_options(module, global_config):
         module (module): The Noxfile module.
         global_config (~nox.main.GlobalConfig): The global configuration.
     """
+    from nox import _options
+
     _options.options.merge_namespaces(global_config, nox.options)
     return module
 

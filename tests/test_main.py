@@ -14,7 +14,11 @@
 
 import os
 import sys
-from unittest import mock
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 import contexter
 import pkg_resources
@@ -28,7 +32,7 @@ import nox.sessions
 
 
 RESOURCES = os.path.join(os.path.dirname(__file__), "resources")
-VERSION = pkg_resources.get_distribution("nox").version
+VERSION = pkg_resources.get_distribution("nox-py2").version
 
 
 # This is needed because CI systems will mess up these tests due to the

@@ -14,9 +14,11 @@
 
 import sys
 import functools
+
 try:
     from itertools import zip_longest as zip_longest
-except:
+except ImportError:
+    # Python 2
     from itertools import izip_longest as zip_longest
 
 
@@ -33,9 +35,9 @@ class Param:
 
     def __init__(self, *args, **kwargs):
         self.args = tuple(args)
-        self.id = kwargs.pop('id', None)
+        self.id = kwargs.pop("id", None)
 
-        arg_names = kwargs.pop('arg_names', None)
+        arg_names = kwargs.pop("arg_names", None)
         if arg_names is None:
             arg_names = ()
 
@@ -54,7 +56,7 @@ class Param:
             if sys.version_info < (3,):
                 for key, value in call_spec.items():
                     if isinstance(value, unicode):
-                        call_spec[key] = value.encode('utf-8')
+                        call_spec[key] = value.encode("utf-8")
             keys = sorted(call_spec.keys(), key=str)
             args = ["{}={}".format(k, repr(call_spec[k])) for k in keys]
             return ", ".join(args)

@@ -172,7 +172,7 @@ class Manifest:
         sessions = []
 
         if sys.version_info < (3,) and isinstance(name, unicode):
-            name = name.encode('utf-8')
+            name = name.encode("utf-8")
         # If the func has the python attribute set to a list, we'll need
         # to expand them.
         if isinstance(func.python, (list, tuple, set)):
@@ -242,7 +242,7 @@ class Manifest:
             ValueError: If the session was not found.
         """
         if sys.version_info < (3,) and isinstance(session, unicode):
-            session = session.encode('utf-8')
+            session = session.encode("utf-8")
 
         # Sanity check: If this session is already in the queue, this is
         # a no-op.

@@ -19,7 +19,11 @@ import json
 import os
 import sys
 import platform
-from unittest import mock
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 import pytest
 

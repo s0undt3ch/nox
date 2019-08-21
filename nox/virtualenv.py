@@ -165,7 +165,8 @@ class CondaEnv(ProcessEnv):
         self.location = os.path.abspath(location)
         self.interpreter = interpreter
         self.reuse_existing = reuse_existing
-        super(CondaEnv, self).__init__()
+        ProcessEnv.__init__(self)
+        #super(CondaEnv, self).__init__()
 
     _clean_location = _clean_location
 
@@ -231,7 +232,7 @@ class VirtualEnv(ProcessEnv):
 
     is_sandboxed = True
 
-    def __init__(self, location, interpreter=None, reuse_existing=False, *, venv=False):
+    def __init__(self, location, interpreter=None, reuse_existing=False, venv=False):
         self.location_name = location
         self.location = os.path.abspath(location)
         self.interpreter = interpreter

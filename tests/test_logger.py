@@ -13,7 +13,11 @@
 # limitations under the License.
 
 import logging
-from unittest import mock
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from nox import logger
 

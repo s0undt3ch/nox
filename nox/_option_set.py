@@ -58,31 +58,18 @@ class Option:
         kwargs: Passed through to``ArgumentParser.add_argument``.
     """
 
-    def __init__(
-        self,
-        name,
-        *flags,
-        help=None,
-        group=None,
-        noxfile=False,
-        merge_func=None,
-        finalizer_func=None,
-        default=None,
-        hidden=False,
-        completer=None,
-        **kwargs
-    ):
+    def __init__(self, name, *flags, **kwargs):
         self.name = name
         self.flags = flags
-        self.help = help
-        self.group = group
-        self.noxfile = noxfile
-        self.merge_func = merge_func
-        self.finalizer_func = finalizer_func
-        self.hidden = hidden
-        self.completer = completer
+        self.help = kwargs.pop("help", None)
+        self.group = kwargs.pop("group", None)
+        self.noxfile = kwargs.pop("noxfile", False)
+        self.merge_func = kwargs.pop("merge_func", None)
+        self.finalizer_func = kwargs.pop("finalizer_func", None)
+        self.hidden = kwargs.pop("hidden", False)
+        self.completer = kwargs.pop("completer", None)
+        self._default = kwargs.pop("default", None)
         self.kwargs = kwargs
-        self._default = default
 
     @property
     def default(self):
